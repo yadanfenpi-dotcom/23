@@ -33,6 +33,23 @@ python scripts/run_report.py
 
 生成结果会保存在 `reports/日报_YYYY-MM-DD.html`，图表会保存在 `reports/assets/`。
 
+## 桌面窗口
+
+如果你想用按钮操作，可以运行：
+
+```powershell
+python scripts/app_window.py
+```
+
+窗口支持：
+
+- 生成示例数据
+- 生成日报
+- 打开最新日报
+- 打开询盘文件夹
+- 打开日报文件夹
+- 选择询盘文件并提示放置位置
+
 ## Excel 字段要求
 
 脚本会自动识别以下字段别名：
