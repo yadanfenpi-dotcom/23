@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+
+# 真实询盘文件和生成产物通常不提交
+data/inquiries/*.xlsx
+reports/
+
+# 保留目录占位文件
+!data/inquiries/.gitkeep
+!data/inquiries/询盘_2026-05-26.xlsx
+!reports/.gitkeep

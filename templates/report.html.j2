@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>询盘日报 {{ report.report_date.strftime("%Y-%m-%d") }}</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f4f7fb;
+      color: #111827;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px 14px 28px;
+    }
+    .header {
+      padding: 20px 2px 14px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 25px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .muted {
+      margin: 0;
+      color: #64748b;
+      font-size: 13px;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 12px 0 16px;
+    }
+    .metric, .section {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    }
+    .metric {
+      padding: 14px;
+    }
+    .metric .label {
+      color: #64748b;
+      font-size: 13px;
+    }
+    .metric .value {
+      margin-top: 5px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1d4ed8;
+    }
+    .section {
+      padding: 16px;
+      margin-top: 12px;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      line-height: 1.35;
+    }
+    .chart {
+      width: 100%;
+      max-width: 520px;
+      display: block;
+      margin: 0 auto;
+      border-radius: 6px;
+    }
+    .list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid #edf2f7;
+    }
+    .list li:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+    .count {
+      flex: 0 0 auto;
+      font-weight: 700;
+      color: #0f766e;
+    }
+    .priority {
+      padding: 12px 0;
+      border-top: 1px solid #edf2f7;
+    }
+    .priority:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+    .subject {
+      font-weight: 700;
+      word-break: break-word;
+    }
+    .meta {
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+    .empty {
+      color: #64748b;
+      margin: 0;
+    }
+    .footer {
+      margin-top: 18px;
+      color: #94a3b8;
+      font-size: 12px;
+      text-align: center;
+    }
+    @media (max-width: 520px) {
+      .summary {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      .metric .value {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <h1>阿里国际站询盘日报</h1>
+      <p class="muted">统计日期：{{ report.report_date.strftime("%Y-%m-%d") }} · 来源：{{ source_file }}</p>
+      {% if report.used_fallback_date %}
+      <p class="muted">提示：未找到昨天的数据，本日报使用文件中最新日期。</p>
+      {% endif %}
+    </header>
+
+    <section class="summary" aria-label="核心指标">
+      <div class="metric">
+        <div class="label">新增询盘</div>
+        <div class="value">{{ report.inquiry_count }}</div>
+      </div>
+      <div class="metric">
+        <div class="label">高优先级询盘</div>
+        <div class="value">{{ report.high_priority | length }}</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>国家/地区分布</h2>
+      {% if chart_path %}
+      <img class="chart" src="{{ chart_path }}" alt="国家/地区分布饼图">
+      {% else %}
+      <p class="empty">暂无国家/地区数据。</p>
+      {% endif %}
+    </section>
+
+    <section class="section">
+      <h2>热门产品 Top 3</h2>
+      {% if report.top_products %}
+      <ol class="list">
+        {% for item in report.top_products %}
+        <li>
+          <span>{{ loop.index }}. {{ item.name }}</span>
+          <span class="count">{{ item.count }} 条</span>
+        </li>
+        {% endfor %}
+      </ol>
+      {% else %}
+      <p class="empty">暂无产品数据。</p>
+      {% endif %}
+    </section>
+
+    <section class="section">
+      <h2>高优先级询盘</h2>
+      {% if report.high_priority %}
+        {% for item in report.high_priority %}
+        <article class="priority">
+          <div class="subject">{{ item.subject }}</div>
+          <div class="meta">{{ item.date }} · {{ item.country }} · {{ item.product }}</div>
+        </article>
+        {% endfor %}
+      {% else %}
+      <p class="empty">没有包含 sample 或 urgent 的询盘。</p>
+      {% endif %}
+    </section>
+
+    <p class="footer">由询盘日报自动生成器生成</p>
+  </main>
+</body>
+</html>
